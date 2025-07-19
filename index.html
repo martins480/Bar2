@@ -1,0 +1,382 @@
+<!-- ARQUIVO ÚNICO HTML COMPLETO COM: Cadastro/Login, Chat, Jogo, Ranking, Música -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bar do Coração Partido</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://images.pexels.com/photos/751046/pexels-photo-751046.jpeg?cs=srgb&dl=pexels-hazan-akoz-isik-236463-751046.jpg&fm=jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Georgia', serif;
+      color: #f5deb3;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.85);
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    header {
+      background-color: rgba(60, 30, 10, 0.9);
+      text-align: center;
+      padding: 2rem 1rem;
+      border-bottom: 4px solid #b8860b;
+      text-shadow: 0 0 8px #ffcc00;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-family: 'Lucida Calligraphy', cursive;
+      color: #ffd700;
+      animation: neonFlicker 1.5s infinite alternate;
+    }
+
+    @keyframes neonFlicker {
+      from { text-shadow: 0 0 5px #ff0; }
+      to { text-shadow: 0 0 15px #ffd700, 0 0 25px #ff0; }
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background-color: rgba(50, 25, 10, 0.9);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #000;
+      display: none;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    input, button {
+      padding: 0.6rem;
+      font-size: 1rem;
+      margin: 0.3rem;
+      border-radius: 5px;
+      border: none;
+    }
+
+    input[type="file"] {
+      background-color: #fff;
+    }
+
+    button {
+      background-color: #b8860b;
+      color: white;
+      cursor: pointer;
+    }
+
+    #loginScreen, #registerScreen {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .chat-box {
+      background-color: #2e1c0e;
+      border: 1px solid #b8860b;
+      height: 200px;
+      overflow-y: auto;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-top: 1rem;
+    }
+
+    .chat-message {
+      margin: 0.4rem 0;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .drink {
+      display: inline-block;
+      background: #3a1f0f;
+      padding: 1rem;
+      margin: 0.5rem;
+      border: 2px solid #b8860b;
+      border-radius: 8px;
+      width: 30%;
+      text-align: center;
+    }
+
+    .drink img {
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    .ranking {
+      background: #2e1c0e;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #b8860b;
+    }
+
+    iframe {
+      margin-top: 1rem;
+      width: 100%;
+      height: 120px;
+      border-radius: 8px;
+      border: 2px solid #b8860b;
+    }
+  </style>
+</head>
+<body><!-- Efeitos Sonoros -->
+<audio id="somAbrirCerveja" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+<audio id="somAmbienteBar" src="https://cdn.pixabay.com/download/audio/2021/10/01/audio_ea040f9ff4.mp3?filename=people-talking-in-a-bar-ambient-5867.mp3" loop autoplay></audio>
+<audio id="somBrinde" src="https://www.soundjay.com/human/sounds/glass-clink-1.mp3"></audio>
+<audio id="somRisada" src="https://www.soundjay.com/human/sounds/laugh-1.mp3"></audio>
+
+  <div class="overlay"></div>
+  <header>
+    <h1>Bar do Coração Partido 💔</h1>
+    <p>sofrência e uma dose de saudade</p>
+  </header>
+
+  <div id="loginScreen">
+    <h2>Entrar no Bar</h2>
+    <input id="loginUser" placeholder="Usuário" />
+    <input id="loginPass" type="password" placeholder="Senha" />
+    <button onclick="login()">Entrar</button>
+    <p>Não tem conta? <a href="#" onclick="showRegister()">Cadastrar</a></p>
+  </div>
+
+  <div id="registerScreen" style="display:none">
+    <h2>Cadastro</h2>
+    <input id="regUser" placeholder="Novo Usuário" />
+    <input id="regPass" type="password" placeholder="Senha" />
+    <input id="regAvatar" type="file" accept="image/*" />
+    <button onclick="register()">Cadastrar</button>
+    <p><a href="#" onclick="showLogin()">Voltar ao login</a></p>
+  </div>
+
+  <div class="container" id="mainContent">
+   <h2>Bem-vindo, <span id="currentUserName"></span> 🍻</span></h2>
+
+    <img id="currentAvatar" class="avatar" src="" />
+	
+   <section class="section">
+      <h3>🎵 Música</h3>
+      <input id="musicLink" placeholder="Link do Spotify/SoundCloud">
+      <button onclick="tocarMusica()">Tocar</button>
+      <div id="musicFrame"></div>
+    </section>
+	
+    <section class="section">
+      <h3>💬 Chat do Bar</h3>
+      <div class="chat-box" id="chatBox"></div>
+      <input id="chatInput" placeholder="Escreva algo..." />
+      <button onclick="enviarMensagem()">Enviar</button>
+	  
+	  
+    </section>
+
+
+	
+	<h3>Gravar e Enviar Áudio</h3>
+<button id="startRecording">🎙️ Gravar</button>
+<button id="stopRecording" disabled>⏹️ Parar</button>
+<div id="audioMessages"></div>
+
+
+    <section class="section">
+      <h3>🍹 Menu de Bebidas</h3>
+      <div class="drink">
+        <img src="https://cdn.craft.cloud/224393fa-1975-4d80-9067-ada3cb5948ca/assets/detail_Skinny_Caipirinha_3.png"><br>
+        <strong>Caipirinha</strong><br>
+        <button onclick="beber()">Beber</button>
+      </div>
+      <div class="drink">
+        <img src="https://imagensempng.com.br/wp-content/uploads/2021/07/05-5.png"><br>
+        <strong>Cerveja</strong><br>
+        <button onclick="beber()">Beber</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h3>🏆 Ranking dos Beberrões</h3>
+      <div class="ranking" id="rankingBox"></div>
+    </section>
+
+    <section class="section">
+      <h3>🎮 Cara ou Coroa</h3>
+      <button onclick="jogar()">Jogar</button>
+      <p id="jogoResultado"></p>
+    </section>
+
+    
+  </div>
+
+  <script>
+    let currentUser = null;
+    let users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    function showRegister() {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("registerScreen").style.display = "block";
+    }
+
+    function showLogin() {
+      document.getElementById("registerScreen").style.display = "none";
+      document.getElementById("loginScreen").style.display = "block";
+    }
+
+    function register() {
+      const user = document.getElementById("regUser").value;
+      const pass = document.getElementById("regPass").value;
+      const file = document.getElementById("regAvatar").files[0];
+      if (!user || !pass || !file) return alert("Preencha todos os campos!");
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        users[user] = { pass, drinks: 0, avatar: e.target.result };
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Cadastro realizado!");
+        showLogin();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function login() {
+      const user = document.getElementById("loginUser").value;
+      const pass = document.getElementById("loginPass").value;
+      if (!users[user] || users[user].pass !== pass) {
+        return alert("Usuário ou senha incorretos");
+      }
+      currentUser = user;
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("mainContent").style.display = "block";
+      document.getElementById("currentUserName").innerText = user;
+      document.getElementById("currentAvatar").src = users[user].avatar;
+      atualizarRanking();
+    }
+
+   function enviarMensagem() {
+  const msg = document.getElementById("chatInput").value.trim();
+  if (!msg) return;
+  const chatBox = document.getElementById("chatBox");
+
+  const div = document.createElement("div");
+  div.className = "chat-message";
+  div.innerHTML = `<img class="avatar" src="${users[currentUser].avatar}"><strong>${currentUser}:</strong> ${msg}`;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  document.getElementById("chatInput").value = "";
+
+  // Garçom IA responde se aplicável
+  garcomResponder(msg);
+}
+
+
+    function beber() {
+      users[currentUser].drinks++;
+      localStorage.setItem("users", JSON.stringify(users));
+      atualizarRanking();
+    }
+
+    function atualizarRanking() {
+      const box = document.getElementById("rankingBox");
+      const sorted = Object.entries(users).sort((a,b) => b[1].drinks - a[1].drinks);
+      box.innerHTML = sorted.map(([u,d]) => `<p><strong>${u}:</strong> ${d.drinks} doses 🍻</p>`).join("");
+    }
+
+    function jogar() {
+      const resultado = Math.random() < 0.5 ? "Cara" : "Coroa";
+      document.getElementById("jogoResultado").innerText = `Deu: ${resultado}! Beba uma!`;
+      beber();
+    }
+
+    function tocarMusica() {
+      const link = document.getElementById("musicLink").value;
+      let embed = "";
+      if (link.includes("spotify")) {
+        const id = link.split("/").pop().split("?")[0];
+        embed = `<iframe src="https://open.spotify.com/embed/track/${id}" allow="encrypted-media"></iframe>`;
+      } else if (link.includes("soundcloud")) {
+        embed = `<iframe src="https://w.soundcloud.com/player/?url=${encodeURIComponent(link)}" allow="autoplay"></iframe>`;
+      } else {
+        embed = "<p>Link inválido.</p>";
+      }
+      document.getElementById("musicFrame").innerHTML = embed;
+    }
+	
+	let mediaRecorder;
+let audioChunks = [];
+
+const startBtn = document.getElementById("startRecording");
+const stopBtn = document.getElementById("stopRecording");
+const audioDiv = document.getElementById("audioMessages");
+
+startBtn.onclick = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(stream);
+
+  audioChunks = [];
+  mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+  mediaRecorder.onstop = () => {
+    const blob = new Blob(audioChunks, { type: "audio/webm" });
+    const audioURL = URL.createObjectURL(blob);
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.src = audioURL;
+    audioDiv.appendChild(audio);
+
+    // Adiciona também no chat
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "chat-message";
+    msgDiv.appendChild(audio);
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  };
+
+  mediaRecorder.start();
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+};
+
+stopBtn.onclick = () => {
+  mediaRecorder.stop();
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+};
+function garcomResponder(msg) {
+  const lower = msg.toLowerCase();
+  const chatBox = document.getElementById("chatBox");
+  let resposta = "";
+
+  if (lower.includes("cerveja")) {
+    resposta = "🍺 Saindo uma gelada pra mesa! Mais alguma coisa?";
+  } else if (lower.includes("conta")) {
+    resposta = "💸 Tá levando fiado? A conta vai em dobro! Brincadeira... já trago a maquininha.";
+  } else if (lower.includes("cardápio")) {
+    resposta = "📜 Temos: cerveja, vinho, caipirinha, torresmo e aquele coração partido de sempre.";
+  } else if (lower.includes("saideira")) {
+    resposta = "🥃 A saideira é por minha conta! Mas só essa, hein?";
+  } else if (lower.includes("obrigado") || lower.includes("valeu")) {
+    resposta = "🙏 Disponha! Qualquer coisa é só chamar.";
+  }
+
+  if (resposta) {
+    const botDiv = document.createElement("div");
+    botDiv.className = "chat-message";
+    botDiv.innerHTML = `<strong>Garçom Zé Boteco:</strong> ${resposta}`;
+    chatBox.appendChild(botDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
+
+  </script>
+</body>
+</html>
